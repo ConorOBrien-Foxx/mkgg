@@ -1,0 +1,10 @@
+1
+[
+    0 1 0 2 roll
+    [ "Fizz 1 0 2 roll 1 or 1 0 2 roll ] [ 0 1 1 2 3 roll 3 mod 0 cmp 1 1 0 2 roll -1 mul add ] if
+    [ "Buzz 1 0 2 roll 1 or 1 0 2 roll ] [ 0 1 1 2 3 roll 5 mod 0 cmp 1 1 0 2 roll -1 mul add ] if
+    [ 0 1 1 2 3 roll putn ] [ 1 0 2 roll 1 cmp ] if
+    10 putc
+    1 add
+]
+[ 0 1 1 2 3 roll 101 cmp ] while

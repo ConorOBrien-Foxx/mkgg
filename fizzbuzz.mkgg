@@ -1,0 +1,11 @@
+#std
+1
+[
+    0 swap
+    [ "Fizz swap 1 or swap ] [ dup 3 mod 0 cmp 1 swap sub ] if
+    [ "Buzz swap 1 or swap ] [ dup 5 mod 0 cmp 1 swap sub ] if
+    [ dup putn ] [ swap 1 cmp ] if
+    NL
+    1 add
+]
+[ dup 101 cmp ] while

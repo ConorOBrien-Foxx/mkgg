@@ -1,0 +1,40 @@
+[ 1 0  2 roll ] :swap
+[ -1 mul add ] :sub
+[ 0  0 1 1  3 roll ] :dup
+[ 0 mul add ] :pop
+[ cmp dup mul 1 swap sub ] :eq
+
+[ 10 putc ] :NL
+[ 32 putc ] :SP
+
+[ 0 cmp dup 1 add mul 2 div ] :posq
+[ 0 cmp dup mul 1 swap sub ] :not
+
+
+[
+  [ dup 1 sub ] [ dup posq ] while
+] :down
+
+[
+  2 0 1   3 roll
+  give give
+  !
+  take [ dup ] if
+  not
+  take [ dup ] if
+] :ifel
+
+[
+    dup give
+    1 sub down
+    take roll
+] :nrev
+
+[ 
+    [
+        dup give nrev take
+        [ swap putc ] [ 1 sub dup -1 cmp ] while
+        pop
+    ]
+    [ dup ] if
+] :puts
