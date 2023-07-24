@@ -137,6 +137,7 @@ executable = ARGV[0] || "mkgg.exe"
 failed = 0
 total = io.size
 io.each.with_index(1) { |(input, expected), i|
+    print "#{i}/#{total}\r"
     result = IO.popen(executable, "r+") { |pipe|
         pipe.write input
         pipe.close_write

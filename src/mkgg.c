@@ -1,8 +1,9 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
-#define M 1024
-char B[17]={0}, // input buffer
+#define M 1024 /* max string size */
+#define W 65   /* max buffer size + 1 */
+char B[W]={0}, // input buffer
 *b, // buffer/string iterator
 E; // eof type
 long long S[M][2], // stack
@@ -10,18 +11,31 @@ long long S[M][2], // stack
 (*J)[2], // stack iterator
 A[M][2], // auxiliary stack
 (*R)[2]=A, // auxiliary stack pointer
-X; // function table max
+X, // function table max
+t; // temporary
+
+char p=
+#ifdef _WIN32
+'\\'
+#else
+'/'
+#endif
+;
 
 // each item on the stack is an int pair [data,type]
-char F[M][26]={0}; // function table (format: 16 character buffer, 0, 8 character "address"
+char F[M][W+8+1]={0}; // function table (format: 16 character buffer, 0, 8 character "address"
 // TODO: changing 25 to 26 in the above line fixed everything; am i off-by-one elsewhere, or is this the correct length?
 
 char *Q[M]={0}, // call stack of read source (0 means read from stdin)
 **H=Q; // head of the call stack
 
+char G[M]={0},// file path handler
+u[M],//other temporary buffer
+*c;//generic char pointer
+
 void debug_function(char* addr) {
     puts("Debugging function...");
-    for(int i = 0; *addr; i++, addr += 17) {
+    for(int i = 0; *addr; i++, addr += W) {
         printf(" %i = [%s]\n", i, addr);
     }
     puts("Done debugging function!");
@@ -29,7 +43,7 @@ void debug_function(char* addr) {
 
 void debug_function_inline(char* addr) {
     printf("[ ");
-    for(int i = 0; *addr; i++, addr += 17) {
+    for(int i = 0; *addr; i++, addr += W) {
         printf("%s ", addr);
     }
     printf("]\n");
@@ -61,12 +75,12 @@ if(H>Q){
     H--;
     if(*H && **H){
         strcpy(B,*H);
-        *H+=17;
+        *H+=W;
         // re-increment only if we have not reached eof of *H
         if(**H)H++;
     }
 }
-else{b=B;do*b=fgetc(Y);while(*b>32&&*b^';'&&++b-B<16);
+else{b=B;do*b=fgetc(Y);while(*b>32&&*b^';'&&++b-B<W-1);
 if(*b==';')for(;*b!='\n'&&!feof(Y);*b=fgetc(Y));
 E=*b;*b=0;}
 }
@@ -75,7 +89,7 @@ E=*b;*b=0;}
 
 // uses the call stack to build the function
 char* store_function(int count, int depth) {
-    char temp_buff[17];
+    char temp_buff[W];
     // skip empty tokens
     // TODO: fix (potential) crash when mismatched
     do g(); while(!*B);
@@ -88,14 +102,14 @@ char* store_function(int count, int depth) {
     if(depth) {
         strcpy(temp_buff, B);
         char* address = store_function(count + 1, depth);
-        address -= 17;
+        address -= W;
         strcpy(address, temp_buff);
         return address;
     }
     // let's just do it lazily atm
     // printf("NEED TO ALLOCATE %i !!\n", count);
     // if(!count) count = 1;
-    int amount = 17 * count;
+    int amount = W * count;
     // printf("----> data with %i bytes\n", amount + 1);
     // char* memory = calloc(amount + 1, 1);
     char* memory = malloc(amount + 1);
@@ -167,13 +181,18 @@ while(subroutine ? start_h <= H : !feof(Y)) {
     }
     else if(*B == '#') {
         // load from file
-        // use last entry in function table as a temporary
-        // this works since it is 8 characters longer than a buffer,
-        // and .mkgg\0 is only 6 characters
-        sprintf(F[X],"%s.mkgg",B+1);
+        if(B[1] == '/') {
+            // #/ relative load
+            sprintf(u,"%s.mkgg",B+2);
+        }
+        else {
+            // # library load
+            sprintf(u,"%s%clib%c%s.mkgg",G,p,p,B+1);
+        }
+        printf("Reading from %s...\n", u);
         // TODO: multiple files?
         // TODO: only include once?
-        FILE* my_file = fopen(F[X],"r");
+        FILE* my_file = fopen(u,"r");
         Y = my_file;
         interp(0);
         fclose(my_file);
@@ -325,8 +344,12 @@ return 0;
 }
 
 // main interpreter
-int main(){
+int main(int argc, char** argv){
     Y=stdin;
+    // initialize base path
+    strncpy(G,*argv,(c=strrchr(*argv,p))?c-*argv:0);
+    if(!*G)*G='.';
+    
     // TODO: golf
     return interp(0);
 }
