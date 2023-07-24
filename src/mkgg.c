@@ -189,7 +189,7 @@ while(subroutine ? start_h <= H : !feof(Y)) {
             // # library load
             sprintf(u,"%s%clib%c%s.mkgg",G,p,p,B+1);
         }
-        printf("Reading from %s...\n", u);
+        // printf("Reading from %s...\n", u);
         // TODO: multiple files?
         // TODO: only include once?
         FILE* my_file = fopen(u,"r");
