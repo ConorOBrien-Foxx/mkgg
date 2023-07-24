@@ -1,1 +1,1 @@
-@gcc mkgg.c -Wall -g -o mkgg
+@gcc src/mkgg.c -Wall -g -o mkgg
