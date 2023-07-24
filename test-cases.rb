@@ -153,6 +153,34 @@ io = [
         "#std 4 posq putn 0 posq putn -4 posq putn",
         "100",
     ],
+    [
+        "#std 9 9 9 9 3 down putn putn putn putn",
+        "0123",
+    ],
+    [
+        "#std 5 0 down putn putn",
+        "05",
+    ],
+    [
+        '#std 5 [ "is-one ] [ "not-one ] [ 1 eq ] ifel',
+        "not-one",
+    ],
+    [
+        '#std 1 [ "is-one ] [ "not-one ] [ 1 eq ] ifel',
+        "is-one",
+    ],
+    [
+        "#std 4 5 6 7 8\n3 nrev putn putn putn putn putn",
+        "67854",
+    ],
+    [
+        "#std 33 72 97 104 97 46 46 46\n7 puts",
+        "Haha...",
+    ],
+    [
+        "#std 65 66 67 0 puts putn",
+        "67",
+    ],
 ]
 
 executable = ARGV[0] || "mkgg.exe"
