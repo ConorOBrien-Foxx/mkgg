@@ -131,7 +131,7 @@ int interp(int subroutine) {
 // printf("  !feof(Y)        = %i\n", !feof(Y));
 // printf(" B O P \n");
 char** start_h = H;
-while(subroutine ? start_h <= H : !feof(Y)) {
+while(subroutine ? start_h <= H : H > Q || !feof(Y)) {
     // debug_stack();
     // printf("LOOP VARIABLES\n");
     // printf("  H - (Q + depth) = %lli\n", H - (Q + depth));

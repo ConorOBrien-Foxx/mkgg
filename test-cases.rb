@@ -5,32 +5,32 @@ end
 io = [
     [
         "123 putn",
-        "123"
+        "123",
     ],
     [
         "65 putc",
-        "A"
+        "A",
     ],
     [
         "3 [ 4 add ] ! putn",
-        "7"
+        "7",
     ],
     [
     
         "3 ; 4\n 5 add putn",
-        "8"
+        "8",
     ],
     [
         '  "Hello  ',
-        "Hello"
+        "Hello",
     ],
     [
         '"Hello 44 putc 32 putc "World!',
-        "Hello, World!"
+        "Hello, World!",
     ],
     [
         "[ 1 add ] :inc 4 inc 5 inc 6 inc putn putn putn",
-        "765"
+        "765",
     ],
     [
         "[ 1 ] :test [ 2 ] :test\ntest putn",
@@ -38,39 +38,39 @@ io = [
     ],
     [
         "[ [ 3 ] :me ] :you [ 9 ] :me\nme putn you me putn",
-        "93"
+        "93",
     ],
     [
         "010030 putn",
-        "10030"
+        "10030",
     ],
     [
         "3 4 give putn take putn",
-        "34"
+        "34",
     ],
     [
         "5 9 and putn",
-        "1"
+        "1",
     ],
     [
         "5 9 or putn",
-        "13"
+        "13",
     ],
     [
         "156 91203 mul putn",
-        "14227668"
+        "14227668",
     ],
     [
         "3 4 div putn",
-        "0"
+        "0",
     ],
     [
         "21 4 div putn",
-        "5"
+        "5",
     ],
     [
         "24 5 mod putn",
-        "4"
+        "4",
     ],
     [
         "6 7 cmp putn 32 putc\n7 7 cmp putn 32 putc\n8 7 cmp putn",
@@ -122,14 +122,37 @@ io = [
     ],
     #  #std functions
     [
-        "#std 3 4 sub putn",
-        "-1"
-    ],
-    [
         "#std 5 7 swap putn putn",
         "57",
-    ]
-    
+    ],
+    [
+        "#std 3 4 sub putn",
+        "-1",
+    ],
+    [
+        "#std 4 5 dup putn putn",
+        "55",
+    ],
+    [
+        "#std 1 2 3 pop putn putn",
+        "21",
+    ],
+    [
+        "#std 3 4 eq putn 4 4 eq putn 5 4 eq putn",
+        "010",
+    ],
+    [
+        "#std NL",
+        "\n",
+    ],
+    [
+        "#std SP",
+        " ",
+    ],
+    [
+        "#std 4 posq putn 0 posq putn -4 posq putn",
+        "100",
+    ],
 ]
 
 executable = ARGV[0] || "mkgg.exe"
