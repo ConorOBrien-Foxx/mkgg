@@ -1,6 +1,8 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include<windows.h>
+// TODO: add linux support for DLLs
 #define M 1024 /* max string size */
 #define W 65   /* max buffer size + 1 */
 char B[W]={0}, // input buffer
@@ -13,6 +15,23 @@ A[M][2], // auxiliary stack
 (*R)[2]=A, // auxiliary stack pointer
 X, // function table max
 t; // temporary
+
+typedef int(*D)(
+    char(*)[W],
+    long long(*)[M][2],
+    long long(**)[2],
+    long long(*)[M][2],
+    long long(**)[2],
+    char(*)[M][W+8+1],
+    long long*,
+    char*(*)[M],
+    char***,
+    char(*)[M],
+    void(*)(void)
+);
+
+// external libraries
+D L[W]={0};
 
 char p=
 #ifdef _WIN32
@@ -169,7 +188,7 @@ while(subroutine ? start_h <= H : H > Q || !feof(Y)) {
             // add name to compare for
             strcpy(F[idx], B + 1);
             // store address (**P) into last 8 bytes of F[idx]
-            memcpy(F[idx] + 18, (char*)&**P, sizeof(long long));
+            memcpy(F[idx] + W+1, (char*)&**P, sizeof(long long));
             // increment table counter if we made a new entry
             if(idx == X) X++;
         }
@@ -177,6 +196,29 @@ while(subroutine ? start_h <= H : H > Q || !feof(Y)) {
             // TODO: remove; golfing doesn't need error checking
             puts("ERROR: CANNOT STORE NON-FUNCTION AS FUNCTION");
             return 1;
+        }
+    }
+    else if(*B == '%') {
+        // TODO: .dll/.so for windows/linux
+        // load from file
+        if(B[1] == '/') {
+            // @/ relative load
+            sprintf(u,"%s.dll",B+2);
+        }
+        else {
+            // @ library load
+            sprintf(u,"%s%clib%c%s.dll",G,p,p,B+1);
+        }
+        printf("Gonna read from [%s]\n", u);
+        HMODULE lib = LoadLibrary(u);
+        if(lib) {
+            D*q=L;
+            for(;*q;q++);
+            // printf("Saving to %lli...\n", q-L);
+            *q=(D)GetProcAddress(lib,"mkgg_step");
+        }
+        else{
+            puts("Could not load .dll");
         }
     }
     else if(*B == '#') {
@@ -272,11 +314,13 @@ while(subroutine ? start_h <= H : H > Q || !feof(Y)) {
         // debug_stack();
         int is_if = *B == 'i';
         P--;
-        char* cond_addr = **P;
+        
+        // GOLF: (char*) is not necessary
+        char* cond_addr = (char*) **P;
         // puts("COND READ!");
         // debug_stack();
         P--;
-        char* body_addr = **P;
+        char* body_addr = (char*) **P;
         // puts("BODY READ!");
         // debug_stack();
         
@@ -302,25 +346,35 @@ while(subroutine ? start_h <= H : H > Q || !feof(Y)) {
     else if(!strcmp("debug", B)) {
         debug_stack();
     }
-    else if(!strcmp("df", B)) {
-        puts("==== DEBUGGING FUNCTION TABLE ====");
-        for(long long tmp = 0; tmp < X; tmp++) {
-            printf(" %lli = '%s'\n", tmp, F[tmp]);
-            char* address = (char*) *(long long*) (F[tmp] + 18);
-            printf(" Address = %p\n", address);
-            debug_function(address);
-        }
-    }
     else {
+        // check against externals
+        int skip=0;
+        for(D*q=L;*q&&!skip;q++) {
+            // printf("Checking %lli...\n", q-L);
+            skip=(*q)(
+                &B,//input buffer
+                &S,//stack
+                &P,//stack head pointer
+                &A,//auxiliary stack
+                &R,//auxiliary stack pointer
+                &F,//function table
+                &X,//function table max
+                &Q,//call stack
+                &H,//call stack head
+                &u,//base path
+                &g //get token
+            );
+        }
+        // alternatively,
         // check if in function table
         // printf("Checking against unknown token '%s'\n", B);
         // puts("Examining function table");
-        for(long long tmp = 0; tmp < X; tmp++) {
+        for(long long tmp = 0; !skip && tmp < X; tmp++) {
             // printf(" %lli = '%s'\n", tmp, F[tmp]);
             if(!strcmp(F[tmp], B)) {
                 // puts("INNER HIT!");
                 // printf("%*s| Expanding definition...\n", depth*4, "");
-                char* address = (char*) *(long long*) (F[tmp] + 18);
+                char* address = (char*) *(long long*) (F[tmp] + W+1);
                 // printf("~> Address = %p\n", address);
                 *H++ = address;
                 break;
