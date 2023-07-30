@@ -190,6 +190,8 @@ total = io.size
 io.each.with_index(1) { |(input, expected), i|
     print "#{i}/#{total}\r"
     result = IO.popen(executable, "r+") { |pipe|
+        # we need io to complete tasks anyhow
+        pipe.write "%io\n"
         pipe.write input
         pipe.close_write
         pipe.read

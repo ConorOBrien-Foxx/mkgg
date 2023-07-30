@@ -52,6 +52,7 @@ char G[M]={0},// file path handler
 u[M],//other temporary buffer
 *c;//generic char pointer
 
+/*
 void debug_function(char* addr) {
     puts("Debugging function...");
     for(int i = 0; *addr; i++, addr += W) {
@@ -83,7 +84,7 @@ void debug_stack(void) {
         }
     }
     puts("== /Stack Debug ==");
-}
+}*/
 
 // get token, stores in B
 FILE*Y; // source to read from
@@ -209,13 +210,14 @@ while(subroutine ? start_h <= H : H > Q || !feof(Y)) {
             // @ library load
             sprintf(u,"%s%clib%c%s.dll",G,p,p,B+1);
         }
-        printf("Gonna read from [%s]\n", u);
-        HMODULE lib = LoadLibrary(u);
-        if(lib) {
+        // printf("Gonna read from [%s]\n", u);
+        HMODULE l=LoadLibrary(u);
+        // TODO: don't allow duplicates?
+        if(l) {
             D*q=L;
             for(;*q;q++);
             // printf("Saving to %lli...\n", q-L);
-            *q=(D)GetProcAddress(lib,"mkgg_step");
+            *q=(D)GetProcAddress(l,"mkgg_step");
         }
         else{
             puts("Could not load .dll");
@@ -302,12 +304,6 @@ while(subroutine ? start_h <= H : H > Q || !feof(Y)) {
         // "pop" the indices
         P -= amt;
     }
-    else if(!strcmp("putc", B)) {
-        putchar(**--P);
-    }
-    else if(!strcmp("putn", B)) {
-        printf("%lli", **--P);
-    }
     else if(!strcmp("while", B) || !strcmp("if", B)) {
          // --> [ body ] [ condition ] while/if
         // puts("LET'S START WHILE!");
@@ -341,10 +337,6 @@ while(subroutine ? start_h <= H : H > Q || !feof(Y)) {
             
             if(is_if) break;
         }
-    }
-    // debug functions; todo, remove?
-    else if(!strcmp("debug", B)) {
-        debug_stack();
     }
     else {
         // check against externals
