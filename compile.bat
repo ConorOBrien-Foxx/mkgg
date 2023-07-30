@@ -1,6 +1,7 @@
 @ECHO off
 ECHO Compiling src...
-gcc src/mkgg.c -Wall -g -o mkgg
+REM gcc src/mkgg.c -Wall -g -o mkgg
+gcc src/mkgg.min.c -Wall -g -o mkgg -O3
 
 ECHO Compiling lib...
 CD /d "lib"

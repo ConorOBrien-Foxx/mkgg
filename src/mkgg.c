@@ -219,7 +219,7 @@ while(subroutine ? start_h <= H : H > Q || !feof(Y)) {
             // printf("Saving to %lli...\n", q-L);
             *q=(D)GetProcAddress(l,"mkgg_step");
         }
-        else{
+        else {
             puts("Could not load .dll");
         }
     }
